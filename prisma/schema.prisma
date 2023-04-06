@@ -13,5 +13,14 @@ datasource db {
 model User {
   id       String @id @default(cuid())
   cpf      String @unique
-  password String 
+  password String
+}
+
+model Funcionario {
+  id                String  @id @default(cuid())
+  nome              String
+  sac               String
+  cidade            String
+  pdv               String
+  processoConcluido Boolean
 }
