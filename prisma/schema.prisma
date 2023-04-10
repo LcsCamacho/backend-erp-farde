@@ -17,7 +17,7 @@ model User {
 }
 
 model Funcionario {
-  id                String  @id @default(cuid())
+  id                Int  @id @default(autoincrement())
   nome              String
   sac               String
   cidade            String
