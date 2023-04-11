@@ -21,7 +21,7 @@ export const inserir = async (req: Request, res: Response) => {
 }
 
 export const atualizar = async (req: Request, res: Response) => {
-    const { id, nome, sac, cidade, pdv, processoConcluido } = req.body;
+    const { id, nome, sac, cidade, pdv, processoConcluido, linkPerfil } = req.body;
     const funcionario = await prisma.funcionario.update({
         where: {
             id:Number(id)
@@ -31,10 +31,24 @@ export const atualizar = async (req: Request, res: Response) => {
             sac,
             cidade,
             pdv,
-            processoConcluido
+            processoConcluido,
+            linkPerfil
         }
     });
     res.json(funcionario).status(200).end();
+}
+
+export const atualizarLinkPerfil = async (req: Request, res: Response) => {
+    const { id, linkPerfil } = req.body;
+    const funcionario = await prisma.funcionario.update({
+        where: {
+            id:Number(id)
+        },
+        data: {
+            linkPerfil
+        }
+    });
+    res.json(funcionario).status(201).end();
 }
 
 export const deletar = async (req: Request, res: Response) => {

@@ -22,5 +22,6 @@ model Funcionario {
   sac               String
   cidade            String
   pdv               String
+  linkPerfil        String
   processoConcluido Boolean
 }
