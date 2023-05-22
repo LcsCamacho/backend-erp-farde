@@ -7,14 +7,15 @@ export const listar = async (req: Request, res: Response) => {
 }
 
 export const inserir = async (req: Request, res: Response) => {
-    const { nome, sac, cidade, pdv, processoConcluido } = req.body;
+    const { nome, sac, cidade, pdv, processoConcluido, linkPerfil } = req.body;
     const funcionario = await prisma.funcionario.create({
         data: {
             nome,
             sac,
             cidade,
             pdv,
-            processoConcluido
+            processoConcluido,
+            linkPerfil
         }
     });
     res.json(funcionario).status(200).end();
