@@ -30,7 +30,14 @@ export const inserirVarios = async (req: Request, res: Response) => {
     else throw new Error("Erro ao inserir funcionarios");
   } catch (error) {
     console.log(error);
-    res.json(error).status(500).end();
+    res
+      .json({
+        error: "Erro ao inserir funcionarios",
+        log: JSON.stringify(error),
+        erro: true,
+      })
+      .status(500)
+      .end();
   }
 };
 export const deletarVarios = async (req: Request, res: Response) => {
