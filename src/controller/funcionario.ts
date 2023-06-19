@@ -21,10 +21,17 @@ export const inserir = async (req: Request, res: Response) => {
   res.json(funcionario).status(200).end();
 };
 export const inserirVarios = async (req: Request, res: Response) => {
-  const funcionario = await prisma.funcionario.createMany({
-    data: req.body,
-  });
-  res.json(funcionario).status(200).end();
+  console.log(req.body);
+  try {
+    const funcionario = await prisma.funcionario.createMany({
+      data: req.body,
+    });
+    if (funcionario) res.json(funcionario).status(200).end();
+    else throw new Error("Erro ao inserir funcionarios");
+  } catch (error) {
+    console.log(error);
+    res.json(error).status(500).end();
+  }
 };
 export const deletarVarios = async (req: Request, res: Response) => {
   const funcionario = await prisma.funcionario.deleteMany();
