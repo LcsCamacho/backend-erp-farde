@@ -56,26 +56,21 @@ export const inserirVarios = async (req: Request, res: Response) => {
       .end();
   }
 };
+
 export const deletarVarios = async (req: Request, res: Response) => {
   try {
-    const funcionario = await prisma.funcionario.deleteMany();
-    res
-      .json({
-        message: "Funcionarios deletados com sucesso",
-        erro: false,
-      })
-      .status(200)
-      .end();
+    const funcionarios = await prisma.funcionario.deleteMany(); // Remova o argumento do deleteMany()
+    res.status(200).json({
+      message: "Funcionários deletados com sucesso",
+      erro: false,
+    });
   } catch (error) {
     console.log(error);
-    res
-      .json({
-        error: "Erro ao deletar funcionarios",
-        log: JSON.stringify(error),
-        erro: true,
-      })
-      .status(500)
-      .end();
+    res.status(500).json({
+      error: "Erro ao deletar funcionários",
+      log: JSON.stringify(error),
+      erro: true,
+    });
   }
 };
 
