@@ -59,8 +59,13 @@ export const inserirVarios = async (req: Request, res: Response) => {
 export const deletarVarios = async (req: Request, res: Response) => {
   try {
     const funcionario = await prisma.funcionario.deleteMany();
-    if (funcionario) res.json(funcionario).status(200).end();
-    else throw new Error("Erro ao deletar funcionarios");
+    res
+      .json({
+        message: "Funcionarios deletados com sucesso",
+        erro: false,
+      })
+      .status(200)
+      .end();
   } catch (error) {
     console.log(error);
     res
