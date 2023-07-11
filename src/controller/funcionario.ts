@@ -43,7 +43,7 @@ const enviarEmail = async ({ email, text }: EnviarEmailFn) => {
     transporter.sendMail(
       {
         from: "lucas.camachofilho@gmail.com",
-        to: "Lucaspaiva@paivatechinfo.com",
+        to: "lucaspaiva@paivatechinfo.com",
         subject: "Alteração de status ERP-FARDE",
         text: text,
       },
