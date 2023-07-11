@@ -26,7 +26,7 @@ const enviarEmail = async ({ email, text }: EnviarEmailFn) => {
 
     const accessToken = oAuth2Client.getAccessToken();
     const transporter = nodemailer.createTransport({
-      host: "smtp.google.com",
+      host: "smtp.gmail.com",
       port: 465,
       secure: true,
       logger: true,
