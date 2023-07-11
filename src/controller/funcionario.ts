@@ -29,8 +29,7 @@ const enviarEmail = async ({ email, text }: EnviarEmailFn) => {
       host: "smtp.gmail.com",
       port: 465,
       secure: true,
-      logger: true,
-      debug: true,
+
       auth: {
         type: "OAuth2",
         user: "lucas.camachofilho@gmail.com",
@@ -63,6 +62,9 @@ export const listarDesligados = async (req: Request, res: Response) => {
       where: {
         ativo: false,
       },
+      orderBy: {
+        id: "asc",
+      },
     });
     if (funcionarios) res.json(funcionarios).status(200).end();
     else throw new Error("Erro ao listar funcionarios");
@@ -84,6 +86,9 @@ export const listarLigados = async (req: Request, res: Response) => {
     const funcionarios = await prisma.funcionario.findMany({
       where: {
         ativo: true,
+      },
+      orderBy: {
+        id: "asc",
       },
     });
     if (funcionarios) res.json(funcionarios).status(200).end();
@@ -126,10 +131,9 @@ export const desligarOuLigarFuncionario = async (
         email: "Lucaspaiva@paivatechinfo.com",
         text: `Olá Lucas Paiva! Sobre o funcionário ${
           funcionarioExistente?.nome
-        } do sistema ERP-FARDE,
-          seu status foi alterado para ${
-            funcionarioExistente?.ativo ? "desligado" : "ligado"
-          }.`,
+        } do sistema ERP-FARDE, seu status foi alterado para ${
+          funcionarioExistente?.ativo ? "desligado" : "ligado"
+        }.`,
       };
       await enviarEmail(emailData);
       res.json(funcionario).status(200).end();
@@ -149,7 +153,11 @@ export const desligarOuLigarFuncionario = async (
 
 export const listar = async (req: Request, res: Response) => {
   try {
-    const funcionarios = await prisma.funcionario.findMany({});
+    const funcionarios = await prisma.funcionario.findMany({
+      orderBy: {
+        id: "asc",
+      },
+    });
     if (funcionarios) res.json(funcionarios).status(200).end();
     else throw new Error("Erro ao listar funcionarios");
   } catch (error) {
