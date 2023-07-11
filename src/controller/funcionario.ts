@@ -1,9 +1,111 @@
 import { Request, Response } from "express";
 import { prisma } from "../services/connect";
+import nodemailer from "nodemailer";
+import { google } from "googleapis";
+
+interface EnviarEmailFn {
+  email: string;
+  text: string;
+}
+//id oAuth2 = 762945846622-75dghpkqivb83dp4bhlugsc11fvoghu4.apps.googleusercontent.com
+//chave = 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
+//refresh token = 1//04O2t0kYgHbBtCgYIARAAGAQSNwF-L9IrE0lSPy8pikmEOJavnX3-n6m71RfLe1AbkmSyLf-TR8Bry6XuN4kVXFK4GPGlZJF1wl8
+
+const enviarEmail = async ({ email, text }: EnviarEmailFn) => {
+  try {
+    const clientId =
+      "762945846622-75dghpkqivb83dp4bhlugsc11fvoghu4.apps.googleusercontent.com";
+    const secret = "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";
+    const token =
+      "1//04O2t0kYgHbBtCgYIARAAGAQSNwF-L9IrE0lSPy8pikmEOJavnX3-n6m71RfLe1AbkmSyLf-TR8Bry6XuN4kVXFK4GPGlZJF1wl8";
+    const redirectUrl = "https://developers.google.com/oauthplayground";
+
+    const oAuth2Client = new google.auth.OAuth2(clientId, secret, redirectUrl);
+
+    oAuth2Client.setCredentials({ refresh_token: token });
+
+    const accessToken = oAuth2Client.getAccessToken();
+    const transporter = nodemailer.createTransport({
+      host: "smtp.google.com",
+      port: 465,
+      secure: true,
+      logger: true,
+      debug: true,
+      auth: {
+        type: "OAuth2",
+        user: "lucas.camachofilho@gmail.com",
+        clientId: clientId,
+        clientSecret: secret,
+        refreshToken: token,
+        accessToken,
+      },
+    });
+    transporter.sendMail(
+      {
+        from: "lucas.camachofilho@gmail.com",
+        to: "Lucaspaiva@paivatechinfo.com",
+        subject: "Alteração de status ERP-FARDE",
+        text: text,
+      },
+      (err, info) => {
+        if (err) console.log(err);
+        else console.log(info);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const desligarOuLigarFuncionario = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const funcionarioExistente = await prisma.funcionario.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    const funcionario = await prisma.funcionario.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        ativo: funcionarioExistente?.ativo ? false : true,
+      },
+    });
+    if (funcionario) {
+      const emailData = {
+        email: "Lucaspaiva@paivatechinfo.com",
+        text: `Olá Lucas Paiva! Sobre o funcionário ${
+          funcionarioExistente?.nome
+        } do sistema ERP-FARDE,
+          seu status foi alterado para ${
+            funcionarioExistente?.ativo ? "desligado" : "ligado"
+          }.`,
+      };
+      await enviarEmail(emailData);
+      res.json(funcionario).status(200).end();
+    }
+  } catch (error) {
+    console.log(error);
+    res
+      .json({
+        error: "Erro ao desligar funcionario",
+        log: JSON.stringify(error),
+        erro: true,
+      })
+      .status(500)
+      .end();
+  }
+};
 
 export const listar = async (req: Request, res: Response) => {
   try {
-    const funcionarios = await prisma.funcionario.findMany();
+    const funcionarios = await prisma.funcionario.findMany({});
     if (funcionarios) res.json(funcionarios).status(200).end();
     else throw new Error("Erro ao listar funcionarios");
   } catch (error) {
@@ -59,7 +161,7 @@ export const inserirVarios = async (req: Request, res: Response) => {
 
 export const deletarVarios = async (req: Request, res: Response) => {
   try {
-    const funcionarios = await prisma.funcionario.deleteMany(); // Remova o argumento do deleteMany()
+    const funcionarios = await prisma.funcionario.deleteMany();
     res.status(200).json({
       message: "Funcionários deletados com sucesso",
       erro: false,
