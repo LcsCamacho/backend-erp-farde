@@ -57,6 +57,50 @@ const enviarEmail = async ({ email, text }: EnviarEmailFn) => {
   }
 };
 
+export const listarDesligados = async (req: Request, res: Response) => {
+  try {
+    const funcionarios = await prisma.funcionario.findMany({
+      where: {
+        ativo: false,
+      },
+    });
+    if (funcionarios) res.json(funcionarios).status(200).end();
+    else throw new Error("Erro ao listar funcionarios");
+  } catch (error) {
+    console.log(error);
+    res
+      .json({
+        error: "Erro ao listar funcionarios",
+        log: JSON.stringify(error),
+        erro: true,
+      })
+      .status(500)
+      .end();
+  }
+};
+
+export const listarLigados = async (req: Request, res: Response) => {
+  try {
+    const funcionarios = await prisma.funcionario.findMany({
+      where: {
+        ativo: true,
+      },
+    });
+    if (funcionarios) res.json(funcionarios).status(200).end();
+    else throw new Error("Erro ao listar funcionarios");
+  } catch (error) {
+    console.log(error);
+    res
+      .json({
+        error: "Erro ao listar funcionarios",
+        log: JSON.stringify(error),
+        erro: true,
+      })
+      .status(500)
+      .end();
+  }
+};
+
 export const desligarOuLigarFuncionario = async (
   req: Request,
   res: Response

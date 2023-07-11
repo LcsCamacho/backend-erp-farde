@@ -8,9 +8,14 @@ import {
   inserirVarios,
   deletarVarios,
   desligarOuLigarFuncionario,
+  listarDesligados,
+  listarLigados,
 } from "../controller/funcionario";
 
 export const routerFuncionario = Router();
+
+routerFuncionario.get("/funcionario/desligados", listarDesligados);
+routerFuncionario.get("/funcionario/ligados", listarLigados);
 
 routerFuncionario.get("/funcionario", listar);
 routerFuncionario.post("/funcionario", inserir);
